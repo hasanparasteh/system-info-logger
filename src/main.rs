@@ -3,11 +3,9 @@ pub mod gatherer;
 pub mod structs;
 pub mod utils;
 
-
+use dotenv::dotenv;
 use std::{cell::RefCell, rc::Rc};
 use sysinfo::SystemExt;
-use dotenv::dotenv;
-
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
@@ -22,18 +20,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
         let data = gatherer::sys_info_gatherer(system);
 
-        match db::insert_into_influx(data, "test", "test").await {
-            Ok(response) => response,
-            Err(_) => {
-                panic!("PANIC")
-            }
-        };
-
-        println!("Run iteration: {}", i);
-
         i += 1;
 
-        if i == 10 {
+        if i == 20 {
+            match db::insert_into_influx(data, "test", "test").await {
+                Ok(response) => response,
+                Err(_) => {
+                    panic!("PANIC")
+                }
+            };
+            println!("DONE");
             break;
         }
     }
