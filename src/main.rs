@@ -22,10 +22,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
         let data = gatherer::sys_info_gatherer(system);
 
-        if i == 10 {
-            break;
-        }
-
         match db::insert_into_influx(data, "test", "test").await {
             Ok(response) => response,
             Err(_) => {
@@ -36,6 +32,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         println!("Run iteration: {}", i);
 
         i += 1;
+
+        if i == 10 {
+            break;
+        }
     }
 
     Ok(())
